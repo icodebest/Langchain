@@ -11,6 +11,9 @@ llm = ChatOpenAI(
     model='gpt-3.5-turbo'
 )
 
+# Load the PromptTemplate from JSON file
+prompt_template = load_prompt("research_paper_explanation_template.json")
+
 # Streamlit app
 st.header("🧠 Research Paper Explainer Tool")
 
@@ -47,33 +50,24 @@ selected_paper = st.selectbox("Select a Research Paper", research_papers)
 selected_explanation = st.selectbox("Select Explanation Type", explanation_types)
 selected_length = st.selectbox("Select Length of Explanation", length_options)
 
-# Load the PromptTemplate from JSON file
-prompt_template = load_prompt("research_paper_explanation_template.json")
+# Combine prompt template and llm
+chain = prompt_template | llm
 
-# When "Generate Explanation" button is clicked
-if st.button('Generate Explanation'):
-    # Fill the template using the loaded PromptTemplate
-    formatted_prompt = prompt_template.format(
-        paper=selected_paper,
-        explanation_type=selected_explanation,
-        length=selected_length
-    )
-
-    # Invoke the model with the formatted prompt
-    result = llm.invoke(formatted_prompt)
-
-    # Show the result
-    st.subheader("📜 Generated Explanation:")
-    st.write(result.content)
+# Prepare the inputs once
+inputs = {
+    "paper": selected_paper,
+    "explanation_type": selected_explanation,
+    "length": selected_length
+}
 
 # When "Summarize" button is clicked
 if st.button("Summarize"):
-    formatted_prompt = prompt_template.format(
-        paper=selected_paper,
-        explanation_type="Simple Summary",
-        length="Short (50-100 words)"
-    )
+    result = chain.invoke(inputs)
+    st.subheader("📜 Generated Summary:")
+    st.write(result.content)
 
-    result = llm.invoke(formatted_prompt)
-    st.subheader("📄 Summary:")
+# When "Generate Explanation" button is clicked 
+if st.button('Generate Explanation'):
+    result = chain.invoke(inputs)
+    st.subheader("📜 Generated Explanation:")
     st.write(result.content)

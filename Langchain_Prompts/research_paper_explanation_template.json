@@ -1,0 +1,17 @@
+{
+    "name": null,
+    "input_variables": [
+        "explanation_type",
+        "length",
+        "paper"
+    ],
+    "optional_variables": [],
+    "output_parser": null,
+    "partial_variables": {},
+    "metadata": null,
+    "tags": null,
+    "template": "You are a research expert.\n\nPlease provide a {explanation_type} of the research paper titled '{paper}', with a length approximately matching {length}.\n\nMake sure the response is clear, informative, and easy to understand.",
+    "template_format": "f-string",
+    "validate_template": true,
+    "_type": "prompt"
+}
